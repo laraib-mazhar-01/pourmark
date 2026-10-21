@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
 import { ArrowRight, ArrowUp, Check, FileText, Leaf, Mail, MapPin, Package, Palette, Phone, ShieldCheck, Truck } from 'lucide-react'
 import { BRAND } from '../data/content'
+import { subscribe as subscribeApi } from '../lib/api'
 import { Bottle } from './Bottle'
 import { Logo } from './Logo'
 
@@ -56,10 +57,14 @@ export function Footer() {
   const [email, setEmail] = useState('')
   const [done, setDone] = useState(false)
 
-  const subscribe = (e: FormEvent) => {
+  const subscribe = async (e: FormEvent) => {
     e.preventDefault()
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) return
-    setDone(true)
+    try {
+      if (await subscribeApi(email.trim())) setDone(true)
+    } catch {
+      /* leave the form so they can retry */
+    }
   }
 
   return (
